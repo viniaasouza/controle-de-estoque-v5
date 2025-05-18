@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockEasy - Área Administrativa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Estilos específicos para área administrativa */
+        .admin-header {
+            background-color: #3D8DAE;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+        
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .admin-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #3D8DAE;
+        }
+        
+        .admin-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+        }
+        
+        .admin-tab.active {
+            border-bottom-color: #3D8DAE;
+            color: #3D8DAE;
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .admin-table th, .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .admin-table th {
+            background-color: #f5f5f5;
+            font-weight: 600;
+        }
+        
+        .admin-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .admin-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .admin-form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .admin-form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        
+        .admin-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .admin-btn-primary {
+            background-color: #3D8DAE;
+            color: white;
+        }
+        
+        .admin-btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .admin-btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .admin-btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="admin-header">
+        <div class="logo">
+            <img src="/img/logo.png" alt="StockEasy Logo" style="height: 40px;">
+        </div>
+        <h1>Área Administrativa</h1>
+    </header>
+    
+    <div class="admin-container">
+        <div class="admin-card">
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="assinaturas">Assinaturas</div>
+                <div class="admin-tab" data-tab="usuarios">Usuários</div>
+                <div class="admin-tab" data-tab="configuracoes">Configurações</div>
+            </div>
+            
+            <!-- TAB: ASSINATURAS -->
+            <div id="assinaturas" class="admin-content active">
+                <div class="admin-title">Gerenciamento de Assinaturas</div>
+                
+                <button id="btnNovaAssinatura" class="admin-btn admin-btn-primary" style="margin-bottom: 20px;">
+                    <i class="fas fa-plus"></i> Nova Assinatura
+                </button>
+                
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            <th>CNPJ</th>
+                            <th>Email</th>
+                            <th>Início</th>
+                            <th>Término</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assinaturasTableBody">
+                        <!-- Dados serão carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- TAB: USUÁRIOS -->
+            <div id="usuarios" class="admin-content">
+                <div class="admin-title">Gerenciamento de Usuários</div>
+                
+                <button id="btnNovoUsuario" class="admin-btn admin-btn-primary" style="margin-bottom: 20px;">
+                    <i class="fas fa-plus"></i> Novo Usuário
+                </button>
+                
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Assinatura</th>
+                            <th>Admin</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosTableBody">
+                        <!-- Dados serão carregados via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- TAB: CONFIGURAÇÕES -->
+            <div id="configuracoes" class="admin-content">
+                <div class="admin-title">Configurações do Sistema</div>
+                
+                <div class="admin-card">
+                    <h3>Informações do Sistema</h3>
+                    <p><strong>Versão:</strong> 1.0.0</p>
+                    <p><strong>Última atualização:</strong> 18/05/2025</p>
+                    <p><strong>Banco de dados:</strong> SQLite</p>
+                </div>
+                
+                <div class="admin-card">
+                    <h3>Backup do Sistema</h3>
+                    <p>Realize backup do banco de dados e configurações.</p>
+                    <button class="admin-btn admin-btn-primary">Gerar Backup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: NOVA/EDITAR ASSINATURA -->
+    <div id="assinaturaModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="assinaturaModalTitle" class="modal-title">Nova Assinatura</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="assinaturaForm">
+                <input type="hidden" id="assinaturaId">
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="nomeEmpresa">Nome da Empresa:</label>
+                    <input type="text" id="nomeEmpresa" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="cnpj">CNPJ:</label>
+                    <input type="text" id="cnpj" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="emailEmpresa">Email:</label>
+                    <input type="email" id="emailEmpresa" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="telefoneEmpresa">Telefone:</label>
+                    <input type="text" id="telefoneEmpresa" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="dataInicio">Data de Início:</label>
+                    <input type="date" id="dataInicio" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="dataFim">Data de Término:</label>
+                    <input type="date" id="dataFim" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Status:</label>
+                    <div>
+                        <label>
+                            <input type="radio" name="statusAssinatura" value="true" checked> Ativa
+                        </label>
+                        <label style="margin-left: 20px;">
+                            <input type="radio" name="statusAssinatura" value="false"> Inativa
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL: NOVO/EDITAR USUÁRIO -->
+    <div id="usuarioModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="usuarioModalTitle" class="modal-title">Novo Usuário</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="usuarioForm">
+                <input type="hidden" id="usuarioId">
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="username">Nome de Usuário:</label>
+                    <input type="text" id="username" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="nomeCompleto">Nome Completo:</label>
+                    <input type="text" id="nomeCompleto" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="emailUsuario">Email:</label>
+                    <input type="email" id="emailUsuario" class="admin-form-control" required>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="senha">Senha:</label>
+                    <input type="password" id="senha" class="admin-form-control">
+                    <small id="senhaHelp" style="color: #6c757d;">Deixe em branco para manter a senha atual (ao editar).</small>
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="assinaturaSelect">Assinatura:</label>
+                    <select id="assinaturaSelect" class="admin-form-control">
+                        <option value="">Selecione uma assinatura</option>
+                        <!-- Opções serão carregadas via JavaScript -->
+                    </select>
+                </div>
+                <div class="admin-form-group">
+                    <label>
+                        <input type="checkbox" id="isAdmin"> Administrador
+                    </label>
+                </div>
+                <div class="admin-form-group">
+                    <label>Status:</label>
+                    <div>
+                        <label>
+                            <input type="radio" name="statusUsuario" value="true" checked> Ativo
+                        </label>
+                        <label style="margin-left: 20px;">
+                            <input type="radio" name="statusUsuario" value="false"> Inativo
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Variáveis globais
+        const API_URL = "/api/admin";
+        let assinaturas = [];
+        let usuarios = [];
+        
+        // Elementos DOM
+        const assinaturasTab = document.querySelector('.admin-tab[data-tab="assinaturas"]');
+        const usuariosTab = document.querySelector('.admin-tab[data-tab="usuarios"]');
+        const configuracoesTab = document.querySelector('.admin-tab[data-tab="configuracoes"]');
+        
+        const assinaturasContent = document.getElementById('assinaturas');
+        const usuariosContent = document.getElementById('usuarios');
+        const configuracoesContent = document.getElementById('configuracoes');
+        
+        const assinaturasTableBody = document.getElementById('assinaturasTableBody');
+        const usuariosTableBody = document.getElementById('usuariosTableBody');
+        
+        const btnNovaAssinatura = document.getElementById('btnNovaAssinatura');
+        const btnNovoUsuario = document.getElementById('btnNovoUsuario');
+        
+        const assinaturaModal = document.getElementById('assinaturaModal');
+        const usuarioModal = document.getElementById('usuarioModal');
+        
+        const assinaturaForm = document.getElementById('assinaturaForm');
+        const usuarioForm = document.getElementById('usuarioForm');
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Carregar dados iniciais
+            carregarAssinaturas();
+            carregarUsuarios();
+            
+            // Configurar tabs
+            assinaturasTab.addEventListener('click', () => ativarTab('assinaturas'));
+            usuariosTab.addEventListener('click', () => ativarTab('usuarios'));
+            configuracoesTab.addEventListener('click', () => ativarTab('configuracoes'));
+            
+            // Configurar botões de nova assinatura/usuário
+            btnNovaAssinatura.addEventListener('click', abrirModalNovaAssinatura);
+            btnNovoUsuario.addEventListener('click', abrirModalNovoUsuario);
+            
+            // Configurar fechamento de modais
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.addEventListener('click', fecharModais);
+            });
+            
+            // Configurar formulários
+            assinaturaForm.addEventListener('submit', salvarAssinatura);
+            usuarioForm.addEventListener('submit', salvarUsuario);
+            
+            // Fechar modais ao clicar fora
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-overlay')) {
+                    fecharModais();
+                }
+            });
+        });
+        
+        // Funções de navegação
+        function ativarTab(tabId) {
+            // Desativar todas as tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Desativar todos os conteúdos
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Ativar a tab selecionada
+            document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        // Funções de carregamento de dados
+        async function carregarAssinaturas() {
+            try {
+                const response = await fetch(`${API_URL}/assinaturas`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar assinaturas');
+                }
+                
+                assinaturas = await response.json();
+                renderizarAssinaturas();
+                atualizarSelectAssinaturas();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar assinaturas. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function carregarUsuarios() {
+            try {
+                const response = await fetch(`${API_URL}/usuarios`);
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar usuários');
+                }
+                
+                usuarios = await response.json();
+                renderizarUsuarios();
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao carregar usuários. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        // Funções de renderização
+        function renderizarAssinaturas() {
+            assinaturasTableBody.innerHTML = '';
+            
+            if (assinaturas.length === 0) {
+                assinaturasTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Nenhuma assinatura encontrada</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            assinaturas.forEach(assinatura => {
+                const row = document.createElement('tr');
+                
+                // Formatar datas
+                const dataInicio = new Date(assinatura.data_inicio).toLocaleDateString('pt-BR');
+                const dataFim = new Date(assinatura.data_fim).toLocaleDateString('pt-BR');
+                
+                row.innerHTML = `
+                    <td>${assinatura.nome_empresa}</td>
+                    <td>${assinatura.cnpj}</td>
+                    <td>${assinatura.email}</td>
+                    <td>${dataInicio}</td>
+                    <td>${dataFim}</td>
+                    <td>
+                        <span class="status-badge ${assinatura.ativa ? 'status-active' : 'status-inactive'}">
+                            ${assinatura.ativa ? 'Ativa' : 'Inativa'}
+                        </span>
+                    </td>
+                    <td class="admin-actions">
+                        <button class="admin-btn admin-btn-warning btn-editar-assinatura" data-id="${assinatura.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${assinatura.ativa ? 
+                            `<button class="admin-btn admin-btn-danger btn-desativar-assinatura" data-id="${assinatura.id}">
+                                <i class="fas fa-ban"></i>
+                            </button>` : 
+                            `<button class="admin-btn admin-btn-success btn-ativar-assinatura" data-id="${assinatura.id}">
+                                <i class="fas fa-check"></i>
+                            </button>`
+                        }
+                    </td>
+                `;
+                
+                assinaturasTableBody.appendChild(row);
+            });
+            
+            // Adicionar event listeners para botões de ação
+            document.querySelectorAll('.btn-editar-assinatura').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    abrirModalEditarAssinatura(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-ativar-assinatura').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    ativarAssinatura(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-desativar-assinatura').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    desativarAssinatura(id);
+                });
+            });
+        }
+        
+        function renderizarUsuarios() {
+            usuariosTableBody.innerHTML = '';
+            
+            if (usuarios.length === 0) {
+                usuariosTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center;">Nenhum usuário encontrado</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            usuarios.forEach(usuario => {
+                const row = document.createElement('tr');
+                
+                // Encontrar nome da assinatura
+                let nomeAssinatura = 'Nenhuma';
+                if (usuario.assinatura_id) {
+                    const assinatura = assinaturas.find(a => a.id === usuario.assinatura_id);
+                    if (assinatura) {
+                        nomeAssinatura = assinatura.nome_empresa;
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td>${usuario.username}</td>
+                    <td>${usuario.nome_completo || '-'}</td>
+                    <td>${usuario.email || '-'}</td>
+                    <td>${nomeAssinatura}</td>
+                    <td>
+                        <span class="status-badge ${usuario.is_admin ? 'status-active' : 'status-inactive'}">
+                            ${usuario.is_admin ? 'Sim' : 'Não'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${usuario.ativo ? 'status-active' : 'status-inactive'}">
+                            ${usuario.ativo ? 'Ativo' : 'Inativo'}
+                        </span>
+                    </td>
+                    <td class="admin-actions">
+                        <button class="admin-btn admin-btn-warning btn-editar-usuario" data-id="${usuario.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${usuario.ativo ? 
+                            `<button class="admin-btn admin-btn-danger btn-desativar-usuario" data-id="${usuario.id}">
+                                <i class="fas fa-ban"></i>
+                            </button>` : 
+                            `<button class="admin-btn admin-btn-success btn-ativar-usuario" data-id="${usuario.id}">
+                                <i class="fas fa-check"></i>
+                            </button>`
+                        }
+                    </td>
+                `;
+                
+                usuariosTableBody.appendChild(row);
+            });
+            
+            // Adicionar event listeners para botões de ação
+            document.querySelectorAll('.btn-editar-usuario').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    abrirModalEditarUsuario(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-ativar-usuario').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    ativarUsuario(id);
+                });
+            });
+            
+            document.querySelectorAll('.btn-desativar-usuario').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    desativarUsuario(id);
+                });
+            });
+        }
+        
+        function atualizarSelectAssinaturas() {
+            const select = document.getElementById('assinaturaSelect');
+            select.innerHTML = '<option value="">Selecione uma assinatura</option>';
+            
+            assinaturas.filter(a => a.ativa).forEach(assinatura => {
+                const option = document.createElement('option');
+                option.value = assinatura.id;
+                option.textContent = assinatura.nome_empresa;
+                select.appendChild(option);
+            });
+        }
+        
+        // Funções de modal
+        function abrirModalNovaAssinatura() {
+            document.getElementById('assinaturaModalTitle').textContent = 'Nova Assinatura';
+            document.getElementById('assinaturaId').value = '';
+            assinaturaForm.reset();
+            
+            // Definir data mínima como hoje
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('dataInicio').min = hoje;
+            document.getElementById('dataFim').min = hoje;
+            
+            // Definir data de início como hoje
+            document.getElementById('dataInicio').value = hoje;
+            
+            // Definir data de fim como 1 ano depois
+            const umAnoDepois = new Date();
+            umAnoDepois.setFullYear(umAnoDepois.getFullYear() + 1);
+            document.getElementById('dataFim').value = umAnoDepois.toISOString().split('T')[0];
+            
+            assinaturaModal.classList.add('active');
+        }
+        
+        function abrirModalEditarAssinatura(id) {
+            const assinatura = assinaturas.find(a => a.id == id);
+            if (!assinatura) return;
+            
+            document.getElementById('assinaturaModalTitle').textContent = 'Editar Assinatura';
+            document.getElementById('assinaturaId').value = assinatura.id;
+            
+            document.getElementById('nomeEmpresa').value = assinatura.nome_empresa;
+            document.getElementById('cnpj').value = assinatura.cnpj;
+            document.getElementById('emailEmpresa').value = assinatura.email;
+            document.getElementById('telefoneEmpresa').value = assinatura.telefone;
+            document.getElementById('dataInicio').value = assinatura.data_inicio;
+            document.getElementById('dataFim').value = assinatura.data_fim;
+            
+            // Definir status
+            const statusRadios = document.getElementsByName('statusAssinatura');
+            for (let radio of statusRadios) {
+                if (radio.value === String(assinatura.ativa)) {
+                    radio.checked = true;
+                }
+            }
+            
+            // Desabilitar CNPJ (não pode ser alterado)
+            document.getElementById('cnpj').disabled = true;
+            
+            assinaturaModal.classList.add('active');
+        }
+        
+        function abrirModalNovoUsuario() {
+            document.getElementById('usuarioModalTitle').textContent = 'Novo Usuário';
+            document.getElementById('usuarioId').value = '';
+            usuarioForm.reset();
+            
+            // Mostrar campo de senha como obrigatório
+            document.getElementById('senha').required = true;
+            document.getElementById('senhaHelp').style.display = 'none';
+            
+            // Habilitar username
+            document.getElementById('username').disabled = false;
+            
+            usuarioModal.classList.add('active');
+        }
+        
+        function abrirModalEditarUsuario(id) {
+            const usuario = usuarios.find(u => u.id == id);
+            if (!usuario) return;
+            
+            document.getElementById('usuarioModalTitle').textContent = 'Editar Usuário';
+            document.getElementById('usuarioId').value = usuario.id;
+            
+            document.getElementById('username').value = usuario.username;
+            document.getElementById('nomeCompleto').value = usuario.nome_completo || '';
+            document.getElementById('emailUsuario').value = usuario.email || '';
+            document.getElementById('assinaturaSelect').value = usuario.assinatura_id || '';
+            document.getElementById('isAdmin').checked = usuario.is_admin;
+            
+            // Definir status
+            const statusRadios = document.getElementsByName('statusUsuario');
+            for (let radio of statusRadios) {
+                if (radio.value === String(usuario.ativo)) {
+                    radio.checked = true;
+                }
+            }
+            
+            // Senha não é obrigatória na edição
+            document.getElementById('senha').required = false;
+            document.getElementById('senhaHelp').style.display = 'block';
+            
+            // Desabilitar username (não pode ser alterado)
+            document.getElementById('username').disabled = true;
+            
+            usuarioModal.classList.add('active');
+        }
+        
+        function fecharModais() {
+            assinaturaModal.classList.remove('active');
+            usuarioModal.classList.remove('active');
+        }
+        
+        // Funções de API
+        async function salvarAssinatura(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('assinaturaId').value;
+            const isEdicao = id !== '';
+            
+            const assinatura = {
+                nome_empresa: document.getElementById('nomeEmpresa').value,
+                cnpj: document.getElementById('cnpj').value,
+                email: document.getElementById('emailEmpresa').value,
+                telefone: document.getElementById('telefoneEmpresa').value,
+                data_inicio: document.getElementById('dataInicio').value,
+                data_fim: document.getElementById('dataFim').value,
+                ativa: document.querySelector('input[name="statusAssinatura"]:checked').value === 'true'
+            };
+            
+            try {
+                let response;
+                
+                if (isEdicao) {
+                    // Edição
+                    response = await fetch(`${API_URL}/assinaturas/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(assinatura)
+                    });
+                } else {
+                    // Criação
+                    response = await fetch(`${API_URL}/assinaturas`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(assinatura)
+                    });
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao salvar assinatura');
+                }
+                
+                // Recarregar dados
+                await carregarAssinaturas();
+                
+                // Fechar modal
+                fecharModais();
+                
+                alert(isEdicao ? 'Assinatura atualizada com sucesso!' : 'Assinatura criada com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao salvar assinatura. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function salvarUsuario(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('usuarioId').value;
+            const isEdicao = id !== '';
+            
+            const usuario = {
+                username: document.getElementById('username').value,
+                nome_completo: document.getElementById('nomeCompleto').value,
+                email: document.getElementById('emailUsuario').value,
+                assinatura_id: document.getElementById('assinaturaSelect').value || null,
+                is_admin: document.getElementById('isAdmin').checked,
+                ativo: document.querySelector('input[name="statusUsuario"]:checked').value === 'true'
+            };
+            
+            // Adicionar senha apenas se fornecida
+            const senha = document.getElementById('senha').value;
+            if (senha) {
+                usuario.password = senha;
+            }
+            
+            try {
+                let response;
+                
+                if (isEdicao) {
+                    // Edição
+                    response = await fetch(`${API_URL}/usuarios/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(usuario)
+                    });
+                } else {
+                    // Criação
+                    response = await fetch(`${API_URL}/usuarios`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(usuario)
+                    });
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao salvar usuário');
+                }
+                
+                // Recarregar dados
+                await carregarUsuarios();
+                
+                // Fechar modal
+                fecharModais();
+                
+                alert(isEdicao ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao salvar usuário. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function ativarAssinatura(id) {
+            try {
+                const response = await fetch(`${API_URL}/assinaturas/${id}/ativar`, {
+                    method: 'PUT'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao ativar assinatura');
+                }
+                
+                // Recarregar dados
+                await carregarAssinaturas();
+                
+                alert('Assinatura ativada com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao ativar assinatura. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function desativarAssinatura(id) {
+            try {
+                const response = await fetch(`${API_URL}/assinaturas/${id}/desativar`, {
+                    method: 'PUT'
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao desativar assinatura');
+                }
+                
+                // Recarregar dados
+                await carregarAssinaturas();
+                
+                alert('Assinatura desativada com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao desativar assinatura. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function ativarUsuario(id) {
+            try {
+                const response = await fetch(`${API_URL}/usuarios/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ativo: true })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao ativar usuário');
+                }
+                
+                // Recarregar dados
+                await carregarUsuarios();
+                
+                alert('Usuário ativado com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao ativar usuário. Verifique o console para mais detalhes.');
+            }
+        }
+        
+        async function desativarUsuario(id) {
+            try {
+                const response = await fetch(`${API_URL}/usuarios/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ativo: false })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Erro ao desativar usuário');
+                }
+                
+                // Recarregar dados
+                await carregarUsuarios();
+                
+                alert('Usuário desativado com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                alert(error.message || 'Erro ao desativar usuário. Verifique o console para mais detalhes.');
+            }
+        }
+    </script>
+</body>
+</html>
